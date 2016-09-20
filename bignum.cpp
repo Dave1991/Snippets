@@ -68,3 +68,89 @@ string bigMultiply(string num1, string num2) {
 		return total;
 	}
 }
+bool isBigger(string& a, string& b) {
+    int p1 = 0, p2 = 0;
+    while (p1 < a.length() && a[p1++] == '0');
+    while (p2 < b.length() && b[p2++] == '0');
+    a = a.substr(p1 - 1, a.length() - p1 + 1);
+    b = b.substr(p2 - 1, b.length() - p2 + 1);
+    if (a.length() > b.length()) return true;
+    else if (a.length() < b.length()) return false;
+    else {
+        int len = a.length();
+        for (int i = 0; i < len; i++) {
+            if (a[i] > b[i]) return true;
+            else if (a[i] < b[i]) return false;
+        }
+        return true;
+    }
+}
+string minus(string a, string b) {
+    int len1 = a.length(), len2 = b.length();
+    int p1 = len1 - 1, p2 = len2 - 1;
+    stack<char> result;
+    int downer = 0;
+    while (p1 >= 0 && p2 >= 0) {
+        if (a[p1] < b[p2]) {
+            if (downer > 0) {
+                result.push('0');
+            } else {
+                result.push('1');
+            }
+            downer = 1;
+        } else if (a[p1] == b[p2]){
+            if (downer > 0) {
+                result.push('1');
+            } else {
+                result.push('0');
+            }
+        } else {
+            if (downer > 0) {
+                result.push('0');
+                downer = 0;
+            } else {
+                result.push('1');
+            }
+        }
+        p1--, p2--;
+    }
+    while (p1 >= 0) {
+        if (downer > 0) {
+            if (a[p1] == '0') {
+                result.push('1');
+            } else {
+                result.push('0');
+                downer = 0;
+            }
+        } else {
+            result.push(a[p1]);
+        }
+        p1--;
+    }
+    string str = "";
+    bool zeroFirst = true;
+    while (!result.empty()) {
+        if (result.top() != '0')
+            zeroFirst = false;
+        if (!zeroFirst)
+            str.push_back(result.top());
+        result.pop();
+    }
+    return str;
+}
+string divide(string a, string b) {
+    int p1 = 0;
+    string cur;
+    string result;
+    while (p1 < a.length()) {
+        cur.push_back(a[p1]);
+        if (isBigger(cur, b)) {
+            result.push_back('1');
+            cur = minus(cur, b);
+        } else {
+            result.push_back('0');
+        }
+        p1++;
+    }
+    return result;
+}
